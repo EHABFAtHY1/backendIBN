@@ -1,14 +1,47 @@
 import { Request, Response, NextFunction } from 'express';
 import Partner from '../models/Partner';
 import { AppError } from '../utils/AppError';
+import {
+    PaginationDto,
+    createPaginatedResponse,
+    buildMongoDBQuery,
+    parseSortString,
+    parseFieldsString,
+    parsePaginationParams,
+} from '../dtos/PaginationDto';
 
 /**
  * GET /api/partners
  */
 export async function getPartners(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const partners = await Partner.find({ isVisible: true }).sort({ order: 1 });
-        res.json({ success: true, data: partners });
+        const dto = req.query as PaginationDto;
+        const { page, size, skip } = parsePaginationParams(req.query);
+
+        const searchFields = ['name', 'description'];
+        const query = buildMongoDBQuery({ ...dto, isVisible: true }, searchFields);
+
+        const total = await Partner.countDocuments(query);
+
+        let dbQuery: any = Partner.find(query)
+            .sort(parseSortString(dto.sort || 'order'))
+            .skip(skip)
+            .limit(size);
+
+        if (dto.fields) {
+            const fieldsObj = parseFieldsString(dto.fields);
+            dbQuery = dbQuery.select(fieldsObj);
+        }
+
+        const partners = await dbQuery.exec();
+
+        res.json(
+            createPaginatedResponse(partners, total, page, size, {
+                search: dto.search,
+                sort: dto.sort,
+                fields: dto.fields,
+            })
+        );
     } catch (error) {
         next(error);
     }
@@ -19,8 +52,33 @@ export async function getPartners(req: Request, res: Response, next: NextFunctio
  */
 export async function getAllPartners(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const partners = await Partner.find().sort({ order: 1 });
-        res.json({ success: true, data: partners });
+        const dto = req.query as PaginationDto;
+        const { page, size, skip } = parsePaginationParams(req.query);
+
+        const searchFields = ['name', 'description'];
+        const query = buildMongoDBQuery(dto, searchFields);
+
+        const total = await Partner.countDocuments(query);
+
+        let dbQuery: any = Partner.find(query)
+            .sort(parseSortString(dto.sort || 'order'))
+            .skip(skip)
+            .limit(size);
+
+        if (dto.fields) {
+            const fieldsObj = parseFieldsString(dto.fields);
+            dbQuery = dbQuery.select(fieldsObj);
+        }
+
+        const partners = await dbQuery.exec();
+
+        res.json(
+            createPaginatedResponse(partners, total, page, size, {
+                search: dto.search,
+                sort: dto.sort,
+                fields: dto.fields,
+            })
+        );
     } catch (error) {
         next(error);
     }

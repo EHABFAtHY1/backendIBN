@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { login, register, getMe, changePassword } from '../controllers/authController';
-import { authenticate, requireRole } from '../middleware/auth';
+import { login, register, getMe, changePassword, logout } from '../controllers/authController';
+import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
@@ -11,7 +11,7 @@ const router = Router();
  *     tags:
  *       - Authentication
  *     summary: Login user
- *     description: Login with email and password to get JWT token
+ *     description: Login with email and password to get session ID
  *     requestBody:
  *       required: true
  *       content:
@@ -47,22 +47,13 @@ router.post('/login', login);
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               name:
- *                 type: string
- *               role:
- *                 type: string
  *     responses:
  *       201:
  *         description: User created successfully
  *       403:
  *         description: Unauthorized
  */
-router.post('/register', authenticate, requireRole('admin'), register);
+router.post('/register', authenticate, authorize('admin'), register);
 
 /**
  * @swagger
@@ -110,5 +101,23 @@ router.get('/me', authenticate, getMe);
  *         description: Unauthorized
  */
 router.put('/change-password', authenticate, changePassword);
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Logout user
+ *     security:
+ *       - bearerAuth: []
+ *     description: Logout and invalidate session
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/logout', authenticate, logout);
 
 export default router;

@@ -1,14 +1,47 @@
 import { Request, Response, NextFunction } from 'express';
 import Department from '../models/Department';
 import { AppError } from '../utils/AppError';
+import {
+    PaginationDto,
+    createPaginatedResponse,
+    buildMongoDBQuery,
+    parseSortString,
+    parseFieldsString,
+    parsePaginationParams,
+} from '../dtos/PaginationDto';
 
 /**
  * GET /api/departments
  */
 export async function getDepartments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const departments = await Department.find({ isVisible: true }).sort({ order: 1 });
-        res.json({ success: true, data: departments });
+        const dto = req.query as PaginationDto;
+        const { page, size, skip } = parsePaginationParams(req.query);
+
+        const searchFields = ['name', 'description'];
+        const query = buildMongoDBQuery({ ...dto, isVisible: true }, searchFields);
+
+        const total = await Department.countDocuments(query);
+
+        let dbQuery: any = Department.find(query)
+            .sort(parseSortString(dto.sort || 'order'))
+            .skip(skip)
+            .limit(size);
+
+        if (dto.fields) {
+            const fieldsObj = parseFieldsString(dto.fields);
+            dbQuery = dbQuery.select(fieldsObj);
+        }
+
+        const departments = await dbQuery.exec();
+
+        res.json(
+            createPaginatedResponse(departments, total, page, size, {
+                search: dto.search,
+                sort: dto.sort,
+                fields: dto.fields,
+            })
+        );
     } catch (error) {
         next(error);
     }
@@ -19,8 +52,33 @@ export async function getDepartments(req: Request, res: Response, next: NextFunc
  */
 export async function getAllDepartments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const departments = await Department.find().sort({ order: 1 });
-        res.json({ success: true, data: departments });
+        const dto = req.query as PaginationDto;
+        const { page, size, skip } = parsePaginationParams(req.query);
+
+        const searchFields = ['name', 'description'];
+        const query = buildMongoDBQuery(dto, searchFields);
+
+        const total = await Department.countDocuments(query);
+
+        let dbQuery: any = Department.find(query)
+            .sort(parseSortString(dto.sort || 'order'))
+            .skip(skip)
+            .limit(size);
+
+        if (dto.fields) {
+            const fieldsObj = parseFieldsString(dto.fields);
+            dbQuery = dbQuery.select(fieldsObj);
+        }
+
+        const departments = await dbQuery.exec();
+
+        res.json(
+            createPaginatedResponse(departments, total, page, size, {
+                search: dto.search,
+                sort: dto.sort,
+                fields: dto.fields,
+            })
+        );
     } catch (error) {
         next(error);
     }

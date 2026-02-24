@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  admin
+  user
+}
+
+model User {
+  id            String  @id
+  userName      String
+  email         String? @unique
+  passwordHash  String
+  role          Role    @default(user)
+  tel           String?
+  photo         String?
+  yearsOfExp    Int?
+  descriptionAr String? @db.Text
+  descriptionEn String? @db.Text
+
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Project {
+  id String @id @default(cuid())
+
+  titleAr String
+  titleEn String
+
+  locationAr String
+  locationEn String
+
+  descriptionAr String @db.Text
+  descriptionEn String @db.Text
+
+  fullDescriptionAr String @db.Text
+  fullDescriptionEn String @db.Text
+
+  durationAr String
+  durationEn String
+
+  teamAr String
+  teamEn String
+
+  area   String
+  status String
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  techStack String[]
+  gallery   String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Category {
+  id String @id @default(cuid())
+
+  titleAr String
+  titleEn String
+
+  descriptionAr String @db.Text
+  descriptionEn String @db.Text
+
+  color String
+
+  countAr String
+  countEn String
+
+  projects Project[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model CompanySettings {
+  id String @id @default(cuid())
+
+  nameAr String
+  nameEn String
+
+  yearsExperience       String
+  clientsCount          String
+  projectsCount         String
+  satisfiedClientsCount String
+  successPercentage     String
+
+  valuesAr String[]
+  valuesEn String[]
+
+  ourSeenAr String
+  ourSeenEn String
+
+  telephone  String
+  email      String
+  addressAr  String
+  addressEn  String
+  addressUrl String
+
+  logo String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("company_settings")
+}

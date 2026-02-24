@@ -2,13 +2,15 @@ import { Router } from 'express';
 import authRoutes from './authRoutes';
 import projectRoutes from './projectRoutes';
 import projectCategoryRoutes from './projectCategoryRoutes';
+import userRoutes from './userRoutes';
+import companySettingsRoutes from './companySettingsRoutes';
 import serviceRoutes from './serviceRoutes';
 import partnerRoutes from './partnerRoutes';
 import departmentRoutes from './departmentRoutes';
 import settingsRoutes from './settingsRoutes';
 import mediaRoutes from './mediaRoutes';
-import userRoutes from './userRoutes';
 import contactRoutes from './contactRoutes';
+import employeeRoutes from './employeeRoutes';
 
 const router = Router();
 
@@ -45,14 +47,16 @@ router.get('/', (req, res) => {
         timestamp: new Date().toISOString(),
         endpoints: {
             auth: '/auth',
+            users: '/users',
             projects: '/projects',
-            'project-categories': '/project-categories',
+            categories: '/categories',
+            'company-settings': '/company-settings',
             services: '/services',
             partners: '/partners',
             departments: '/departments',
+            employees: '/employees',
             settings: '/settings',
             media: '/media',
-            users: '/users',
             contact: '/contact',
             docs: '/api-docs',
         },
@@ -60,14 +64,16 @@ router.get('/', (req, res) => {
 });
 
 router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
 router.use('/projects', projectRoutes);
-router.use('/project-categories', projectCategoryRoutes);
+router.use('/categories', projectCategoryRoutes);
+router.use('/company-settings', companySettingsRoutes);
 router.use('/services', serviceRoutes);
 router.use('/partners', partnerRoutes);
 router.use('/departments', departmentRoutes);
+router.use('/employees', employeeRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/media', mediaRoutes);
-router.use('/users', userRoutes);
 router.use('/contact', contactRoutes);
 
 export default router;

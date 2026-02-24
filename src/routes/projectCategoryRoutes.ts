@@ -1,24 +1,51 @@
 import { Router } from 'express';
 import {
     getCategories,
-    getAllCategories,
-    getCategoryBySlug,
+    getCategory,
     createCategory,
     updateCategory,
     deleteCategory,
 } from '../controllers/projectCategoryController';
-import { authenticate, requireRole } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
+/**
+ * @swagger
+ * /categories:
+ *   get:
+ *     tags:
+ *       - Categories
+ *     summary: Get all categories
+ *     description: Retrieve all project categories with pagination
+ *     responses:
+ *       200:
+ *         description: Categories retrieved successfully
+ *   post:
+ *     tags:
+ *       - Categories
+ *     summary: Create new category
+ *     security:
+ *       - bearerAuth: []
+ *     description: Create a new project category (admin only)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ */
+
 // Public routes
 router.get('/', getCategories);
-router.get('/:slug', getCategoryBySlug);
+router.get('/:id', getCategory);
 
 // Admin routes
-router.get('/admin/all', authenticate, requireRole('admin', 'editor'), getAllCategories);
-router.post('/', authenticate, requireRole('admin', 'editor'), createCategory);
-router.put('/:id', authenticate, requireRole('admin', 'editor'), updateCategory);
-router.delete('/:id', authenticate, requireRole('admin'), deleteCategory);
+router.post('/', authenticate, authorize('admin'), createCategory);
+router.put('/:id', authenticate, authorize('admin'), updateCategory);
+router.delete('/:id', authenticate, authorize('admin'), deleteCategory);
 
 export default router;

@@ -1,14 +1,49 @@
 import { Request, Response, NextFunction } from 'express';
 import Service from '../models/Service';
 import { AppError } from '../utils/AppError';
+import {
+    PaginationDto,
+    createPaginatedResponse,
+    buildMongoDBQuery,
+    parseSortString,
+    parseFieldsString,
+    parsePaginationParams,
+} from '../dtos/PaginationDto';
 
 /**
  * GET /api/services
+ * Query params:
+ *   - page, size, search, sort, fields, isVisible
  */
 export async function getServices(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const services = await Service.find({ isVisible: true }).sort({ order: 1 });
-        res.json({ success: true, data: services });
+        const dto = req.query as PaginationDto;
+        const { page, size, skip } = parsePaginationParams(req.query);
+
+        const searchFields = ['title', 'description'];
+        const query = buildMongoDBQuery({ ...dto, isVisible: true }, searchFields);
+
+        const total = await Service.countDocuments(query);
+
+        let dbQuery: any = Service.find(query)
+            .sort(parseSortString(dto.sort || 'order'))
+            .skip(skip)
+            .limit(size);
+
+        if (dto.fields) {
+            const fieldsObj = parseFieldsString(dto.fields);
+            dbQuery = dbQuery.select(fieldsObj);
+        }
+
+        const services = await dbQuery.exec();
+
+        res.json(
+            createPaginatedResponse(services, total, page, size, {
+                search: dto.search,
+                sort: dto.sort,
+                fields: dto.fields,
+            })
+        );
     } catch (error) {
         next(error);
     }
@@ -19,8 +54,33 @@ export async function getServices(req: Request, res: Response, next: NextFunctio
  */
 export async function getAllServices(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const services = await Service.find().sort({ order: 1 });
-        res.json({ success: true, data: services });
+        const dto = req.query as PaginationDto;
+        const { page, size, skip } = parsePaginationParams(req.query);
+
+        const searchFields = ['title', 'description'];
+        const query = buildMongoDBQuery(dto, searchFields);
+
+        const total = await Service.countDocuments(query);
+
+        let dbQuery: any = Service.find(query)
+            .sort(parseSortString(dto.sort || 'order'))
+            .skip(skip)
+            .limit(size);
+
+        if (dto.fields) {
+            const fieldsObj = parseFieldsString(dto.fields);
+            dbQuery = dbQuery.select(fieldsObj);
+        }
+
+        const services = await dbQuery.exec();
+
+        res.json(
+            createPaginatedResponse(services, total, page, size, {
+                search: dto.search,
+                sort: dto.sort,
+                fields: dto.fields,
+            })
+        );
     } catch (error) {
         next(error);
     }

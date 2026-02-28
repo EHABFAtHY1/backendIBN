@@ -148,11 +148,3 @@ export async function deleteCategory(req: Request, res: Response, next: NextFunc
         next(error);
     }
 }
-if (!category) {
-    throw new AppError('Category not found.', 404);
-}
-res.json({ success: true, message: 'Category deleted.' });
-    } catch (error) {
-    next(error);
-}
-}

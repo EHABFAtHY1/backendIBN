@@ -42,6 +42,36 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "titleAr": {
+                  "example": "any"
+                },
+                "titleEn": {
+                  "example": "any"
+                },
+                "descriptionAr": {
+                  "example": "any"
+                },
+                "descriptionEn": {
+                  "example": "any"
+                },
+                "color": {
+                  "example": "any"
+                },
+                "countAr": {
+                  "example": "any"
+                },
+                "countEn": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -108,7 +138,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
+                "userName": {
                   "example": "any"
                 },
                 "email": {
@@ -118,6 +148,21 @@
                   "example": "any"
                 },
                 "role": {
+                  "example": "any"
+                },
+                "tel": {
+                  "example": "any"
+                },
+                "photo": {
+                  "example": "any"
+                },
+                "yearsOfExp": {
+                  "example": "any"
+                },
+                "descriptionAr": {
+                  "example": "any"
+                },
+                "descriptionEn": {
                   "example": "any"
                 }
               }
@@ -180,32 +225,39 @@
         }
       }
     },
-    "/projects/": {
+    "/auth/logout": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "sort",
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "fields",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "category",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "isWorking",
+            "name": "limit",
             "in": "query",
             "type": "string"
           }
@@ -223,11 +275,227 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "passwordHash": {
+                  "example": "any"
+                },
+                "role": {
+                  "example": "any"
+                },
+                "tel": {
+                  "example": "any"
+                },
+                "photo": {
+                  "example": "any"
+                },
+                "yearsOfExp": {
+                  "example": "any"
+                },
+                "descriptionAr": {
+                  "example": "any"
+                },
+                "descriptionEn": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
           "201": {
             "description": "Created"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "titleAr": {
+                  "example": "any"
+                },
+                "titleEn": {
+                  "example": "any"
+                },
+                "locationAr": {
+                  "example": "any"
+                },
+                "locationEn": {
+                  "example": "any"
+                },
+                "descriptionAr": {
+                  "example": "any"
+                },
+                "descriptionEn": {
+                  "example": "any"
+                },
+                "fullDescriptionAr": {
+                  "example": "any"
+                },
+                "fullDescriptionEn": {
+                  "example": "any"
+                },
+                "durationAr": {
+                  "example": "any"
+                },
+                "durationEn": {
+                  "example": "any"
+                },
+                "teamAr": {
+                  "example": "any"
+                },
+                "teamEn": {
+                  "example": "any"
+                },
+                "area": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "categoryId": {
+                  "example": "any"
+                },
+                "techStack": {
+                  "example": "any"
+                },
+                "gallery": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/projects/category/{categoryId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -302,17 +570,12 @@
             "type": "string"
           },
           {
-            "name": "sort",
+            "name": "page",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "fields",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "search",
+            "name": "limit",
             "in": "query",
             "type": "string"
           }
@@ -324,80 +587,17 @@
         }
       }
     },
-    "/projects/{id}/visibility": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/projects/{id}/order": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "order": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/project-categories/": {
+    "/categories/": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "sort",
+            "name": "page",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "fields",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "search",
+            "name": "limit",
             "in": "query",
             "type": "string"
           }
@@ -415,6 +615,36 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "titleAr": {
+                  "example": "any"
+                },
+                "titleEn": {
+                  "example": "any"
+                },
+                "descriptionAr": {
+                  "example": "any"
+                },
+                "descriptionEn": {
+                  "example": "any"
+                },
+                "color": {
+                  "example": "any"
+                },
+                "countAr": {
+                  "example": "any"
+                },
+                "countEn": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -424,12 +654,12 @@
         }
       }
     },
-    "/project-categories/{slug}": {
+    "/categories/{id}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "slug",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -440,41 +670,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/project-categories/admin/all": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "fields",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/project-categories/{id}": {
+      },
       "put": {
         "description": "",
         "parameters": [
@@ -505,6 +701,106 @@
             "required": true,
             "type": "string"
           },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/company-settings/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nameAr": {
+                  "example": "any"
+                },
+                "nameEn": {
+                  "example": "any"
+                },
+                "yearsExperience": {
+                  "example": "any"
+                },
+                "clientsCount": {
+                  "example": "any"
+                },
+                "projectsCount": {
+                  "example": "any"
+                },
+                "satisfiedClientsCount": {
+                  "example": "any"
+                },
+                "successPercentage": {
+                  "example": "any"
+                },
+                "valuesAr": {
+                  "example": "any"
+                },
+                "valuesEn": {
+                  "example": "any"
+                },
+                "ourSeenAr": {
+                  "example": "any"
+                },
+                "ourSeenEn": {
+                  "example": "any"
+                },
+                "telephone": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "addressAr": {
+                  "example": "any"
+                },
+                "addressEn": {
+                  "example": "any"
+                },
+                "addressUrl": {
+                  "example": "any"
+                },
+                "logo": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
           {
             "name": "authorization",
             "in": "header",
@@ -1261,141 +1557,6 @@
         }
       }
     },
-    "/users/": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "fields",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "role",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
-                "role": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      }
-    },
-    "/users/{id}": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "role": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/contact/": {
       "post": {
         "description": "",
@@ -1609,7 +1770,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
+                "userName": {
                   "example": "any"
                 },
                 "email": {
@@ -1619,6 +1780,21 @@
                   "example": "any"
                 },
                 "role": {
+                  "example": "any"
+                },
+                "tel": {
+                  "example": "any"
+                },
+                "photo": {
+                  "example": "any"
+                },
+                "yearsOfExp": {
+                  "example": "any"
+                },
+                "descriptionAr": {
+                  "example": "any"
+                },
+                "descriptionEn": {
                   "example": "any"
                 }
               }
@@ -1681,7 +1857,40 @@
         }
       }
     },
+    "/logout": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "put": {
         "description": "",
         "parameters": [
@@ -1723,12 +1932,14 @@
             "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/category/{categoryId}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "categoryId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1764,64 +1975,6 @@
             "name": "search",
             "in": "query",
             "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/{id}/visibility": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/{id}/order": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "order": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {

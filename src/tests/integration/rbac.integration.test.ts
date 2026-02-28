@@ -36,12 +36,12 @@ describe('RBAC - Role-Based Access Control Integration Tests', () => {
 
         if (adminRes.status === 401) {
             const adminUser = await User.create({
-                name: 'Admin User',
+                userName: 'Admin User',
                 email: 'admin@ibnalshaekh.com',
-                password: 'Admin123!',
+                passwordHash: 'Admin123!',
                 role: 'admin',
             });
-            adminUserId = adminUser._id;
+            adminUserId = adminUser._id as unknown as string;
 
             const loginRes = await request(app)
                 .post('/api/auth/login')

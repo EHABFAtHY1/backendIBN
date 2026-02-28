@@ -4,11 +4,12 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import * as authController from '../controllers/authController';
-import User from '../models/User';
-import { AppError } from '../utils/AppError';
+import mongoose from 'mongoose';
+import * as authController from '../../controllers/authController';
+import User, { IUser } from '../../models/User';
+import { AppError } from '../../utils/AppError';
 
-jest.mock('../models/User');
+jest.mock('../../models/User');
 
 describe('Authentication Controller - Unit Tests', () => {
     let mockRequest: Partial<Request>;
@@ -18,7 +19,16 @@ describe('Authentication Controller - Unit Tests', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockRequest = {
-            user: { _id: 'user123' },
+            user: {
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
+                userName: 'testuser',
+                email: 'test@example.com',
+                role: 'user',
+                passwordHash: 'hashed',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                comparePassword: jest.fn(),
+            } as unknown as IUser,
             body: {},
         };
         mockResponse = {
@@ -31,7 +41,7 @@ describe('Authentication Controller - Unit Tests', () => {
     describe('Login', () => {
         test('Should login with valid credentials (admin)', async () => {
             const mockUser = {
-                _id: 'admin123',
+                _id: 'admin123' as unknown as mongoose.Types.ObjectId,
                 name: 'Admin User',
                 email: 'admin@example.com',
                 role: 'admin',
@@ -59,18 +69,18 @@ describe('Authentication Controller - Unit Tests', () => {
             expect(response.data.user.role).toBe('admin');
         });
 
-        test('Should login with valid credentials (employee)', async () => {
+        test('Should login with valid credentials (user)', async () => {
             const mockUser = {
-                _id: 'emp123',
-                name: 'Employee User',
-                email: 'emp@example.com',
-                role: 'employee',
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
+                userName: 'TestUser',
+                email: 'user@example.com',
+                role: 'user',
                 comparePassword: jest.fn().mockResolvedValue(true),
             };
 
             mockRequest.body = {
-                email: 'emp@example.com',
-                password: 'EmpPass123!',
+                email: 'user@example.com',
+                password: 'UserPass123!',
             };
 
             (User.findOne as jest.Mock).mockReturnValue({
@@ -86,7 +96,7 @@ describe('Authentication Controller - Unit Tests', () => {
             expect(mockResponse.json).toHaveBeenCalled();
             const response = (mockResponse.json as jest.Mock).mock.calls[0][0];
             expect(response.success).toBe(true);
-            expect(response.data.user.role).toBe('employee');
+            expect(response.data.user.role).toBe('user');
         });
 
         test('Should reject invalid credentials', async () => {
@@ -128,15 +138,15 @@ describe('Authentication Controller - Unit Tests', () => {
     describe('Register (Admin Only)', () => {
         test('Should register new user as admin', async () => {
             mockRequest.body = {
-                name: 'New User',
+                userName: 'New User',
                 email: 'newuser@example.com',
                 password: 'SecurePass123!',
-                role: 'employee',
+                role: 'user',
             };
 
             (User.findOne as jest.Mock).mockResolvedValue(null);
             (User.create as jest.Mock).mockResolvedValue({
-                _id: 'newuser123',
+                _id: 'newuser123' as unknown as mongoose.Types.ObjectId,
                 ...mockRequest.body,
             });
 
@@ -171,11 +181,15 @@ describe('Authentication Controller - Unit Tests', () => {
     describe('Get Current User', () => {
         test('Should return logged-in user data', async () => {
             mockRequest.user = {
-                _id: 'user123',
-                name: 'Current User',
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
+                userName: 'Current User',
                 email: 'user@example.com',
-                role: 'employee',
-            };
+                role: 'user',
+                passwordHash: 'hashed',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                comparePassword: jest.fn(),
+            } as unknown as IUser;
 
             await authController.getMe(
                 mockRequest as Request,
@@ -190,14 +204,24 @@ describe('Authentication Controller - Unit Tests', () => {
 
     describe('Change Password', () => {
         test('Should change password successfully', async () => {
-            mockRequest.user = { _id: 'user123' };
+            mockRequest.user = {
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
+                userName: 'testuser',
+                email: 'test@example.com',
+                role: 'user',
+                passwordHash: 'hashed',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                comparePassword: jest.fn(),
+            } as unknown as IUser;
+
             mockRequest.body = {
                 currentPassword: 'OldPass123!',
                 newPassword: 'NewPass123!',
             };
 
             const mockUser = {
-                _id: 'user123',
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
                 comparePassword: jest.fn().mockResolvedValue(true),
                 save: jest.fn().mockResolvedValue(true),
             };
@@ -216,7 +240,17 @@ describe('Authentication Controller - Unit Tests', () => {
         });
 
         test('Should reject wrong current password', async () => {
-            mockRequest.user = { _id: 'user123' };
+            mockRequest.user = {
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
+                userName: 'testuser',
+                email: 'test@example.com',
+                role: 'user',
+                passwordHash: 'hashed',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                comparePassword: jest.fn(),
+            } as unknown as IUser;
+
             mockRequest.body = {
                 currentPassword: 'WrongPass',
                 newPassword: 'NewPass123!',

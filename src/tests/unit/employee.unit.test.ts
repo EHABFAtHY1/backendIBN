@@ -6,14 +6,15 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import * as employeeController from '../controllers/employeeController';
-import Employee from '../models/Employee';
-import User from '../models/User';
-import { AppError } from '../utils/AppError';
+import mongoose from 'mongoose';
+import * as employeeController from '../../controllers/employeeController';
+import Employee from '../../models/Employee';
+import User, { IUser } from '../../models/User';
+import { AppError } from '../../utils/AppError';
 
 // Mock the models
-jest.mock('../models/Employee');
-jest.mock('../models/User');
+jest.mock('../../models/Employee');
+jest.mock('../../models/User');
 
 describe('Employee Controller - Unit Tests', () => {
     let mockRequest: Partial<Request>;
@@ -26,7 +27,16 @@ describe('Employee Controller - Unit Tests', () => {
 
         // Setup mock request/response
         mockRequest = {
-            user: { _id: 'user123' },
+            user: {
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
+                userName: 'testuser',
+                email: 'test@example.com',
+                role: 'user',
+                passwordHash: 'hashed',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                comparePassword: jest.fn(),
+            } as unknown as IUser,
             params: {},
             body: {},
         };
@@ -91,14 +101,14 @@ describe('Employee Controller - Unit Tests', () => {
         test('should return list of active employees', async () => {
             const mockEmployees = [
                 {
-                    _id: 'emp1',
+                    _id: 'emp1' as unknown as mongoose.Types.ObjectId,
                     firstName: 'أحمد',
                     lastName: 'علي',
                     position: 'engineer',
                     department: 'إنشاءات',
                 },
                 {
-                    _id: 'emp2',
+                    _id: 'emp2' as unknown as mongoose.Types.ObjectId,
                     firstName: 'فاطمة',
                     lastName: 'محمد',
                     position: 'technician',
@@ -145,13 +155,13 @@ describe('Employee Controller - Unit Tests', () => {
             };
 
             const mockUser = {
-                _id: 'user123',
+                _id: 'user123' as unknown as mongoose.Types.ObjectId,
                 name: 'أحمد علي',
                 email: 'ahmed@example.com',
             };
 
             const mockEmployee = {
-                _id: 'emp123',
+                _id: 'emp123' as unknown as mongoose.Types.ObjectId,
                 ...mockRequest.body,
                 user: mockUser._id,
                 populate: jest.fn().mockResolvedValue({
@@ -231,7 +241,7 @@ describe('Employee Controller - Unit Tests', () => {
             };
 
             const mockEmployee = {
-                _id: 'emp123',
+                _id: 'emp123' as unknown as mongoose.Types.ObjectId,
                 firstName: 'أحمد',
                 lastName: 'علي',
                 position: 'manager',
@@ -287,8 +297,8 @@ describe('Employee Controller - Unit Tests', () => {
             mockRequest.params = { id: 'emp123' };
 
             const mockEmployee = {
-                _id: 'emp123',
-                user: 'user123',
+                _id: 'emp123' as unknown as mongoose.Types.ObjectId,
+                user: 'user123' as unknown as mongoose.Types.ObjectId,
             };
 
             (Employee.findById as jest.Mock).mockResolvedValue(mockEmployee);
@@ -332,7 +342,7 @@ describe('Employee Controller - Unit Tests', () => {
             };
 
             const mockEmployee = {
-                _id: 'emp123',
+                _id: 'emp123' as unknown as mongoose.Types.ObjectId,
                 firstName: 'أحمد',
                 projects: ['proj1', 'proj2', 'proj3'],
                 populate: jest.fn().mockResolvedValue({}),

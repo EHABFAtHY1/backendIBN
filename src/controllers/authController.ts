@@ -34,7 +34,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         res.json({
             success: true,
             data: {
-                sessionId: session._id.toString(),
+                token: session._id.toString(),
                 user: {
                     id: user._id,
                     userName: user.userName,

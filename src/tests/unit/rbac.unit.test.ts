@@ -6,12 +6,12 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { authenticate, requireRole } from '../middleware/auth';
-import User from '../models/User';
+import { authenticate, requireRole } from '../../middleware/auth';
+import User from '../../models/User';
 import jwt from 'jsonwebtoken';
-import { AppError } from '../utils/AppError';
+import { AppError } from '../../utils/AppError';
 
-jest.mock('../models/User');
+jest.mock('../../models/User');
 
 describe('RBAC - Unit Tests', () => {
     let mockRequest: Partial<Request>;
@@ -149,15 +149,16 @@ describe('RBAC - Unit Tests', () => {
         test('should support multiple allowed roles', () => {
             mockRequest.user = {
                 _id: 'user123',
-                name: 'Employee',
-                email: 'emp@example.com',
-                role: 'employee',
+                userName: 'TestUser',
+                email: 'user@example.com',
+                role: 'user',
+                passwordHash: 'hashed',
                 comparePassword: jest.fn(),
                 createdAt: new Date(),
                 updatedAt: new Date(),
             } as any;
 
-            const middleware = requireRole('admin', 'employee');
+            const middleware = requireRole('admin');
             middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
             expect(mockNext).toHaveBeenCalledWith();

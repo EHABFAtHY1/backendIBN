@@ -14,6 +14,11 @@ export interface IProject extends Document {
     durationEn: string;
     teamAr: string;
     teamEn: string;
+    workersCount?: number;
+    engineersCount?: number;
+    injuredCount?: number;
+    actualDurationAr?: string;
+    actualDurationEn?: string;
     area: string;
     status: string;
     categoryId: mongoose.Types.ObjectId;
@@ -37,6 +42,11 @@ const ProjectSchema = new Schema<IProject>(
         durationEn: { type: String, required: true },
         teamAr: { type: String, required: true },
         teamEn: { type: String, required: true },
+        workersCount: { type: Number },
+        engineersCount: { type: Number },
+        injuredCount: { type: Number },
+        actualDurationAr: { type: String },
+        actualDurationEn: { type: String },
         area: { type: String, required: true },
         status: { type: String, required: true },
         categoryId: {

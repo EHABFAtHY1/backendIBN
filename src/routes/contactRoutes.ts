@@ -14,10 +14,215 @@ import { body } from 'express-validator';
 const router = Router();
 
 /**
- * @route   POST /api/contact
- * @desc    Submit a contact message
- * @access  Public
+ * @swagger
+ * /contact:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Submit a contact message (public)
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateContactMessageInput'
+ *     responses:
+ *       201:
+ *         description: Message submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/ContactMessage'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *   get:
+ *     tags:
+ *       - Contact
+ *     summary: Get all contact messages (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: limit
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - name: status
+ *         in: query
+ *         schema:
+ *           type: string
+ *           enum: [new, read, replied]
+ *         description: Filter by status
+ *     responses:
+ *       200:
+ *         description: Contact messages retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ContactMessage'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     pages:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
  */
+
+/**
+ * @swagger
+ * /contact/stats/overview:
+ *   get:
+ *     tags:
+ *       - Contact
+ *     summary: Get contact message statistics (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Statistics retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     new:
+ *                       type: integer
+ *                     read:
+ *                       type: integer
+ *                     replied:
+ *                       type: integer
+ */
+
+/**
+ * @swagger
+ * /contact/{id}:
+ *   get:
+ *     tags:
+ *       - Contact
+ *     summary: Get single contact message (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/ContactMessage'
+ *       404:
+ *         description: Message not found
+ *   patch:
+ *     tags:
+ *       - Contact
+ *     summary: Update contact message status (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [new, read, replied]
+ *     responses:
+ *       200:
+ *         description: Status updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/ContactMessage'
+ *       400:
+ *         description: Invalid status
+ *       404:
+ *         description: Message not found
+ *   delete:
+ *     tags:
+ *       - Contact
+ *     summary: Delete contact message (admin only)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       404:
+ *         description: Message not found
+ */
+
 router.post(
     '/',
     validate([
@@ -53,32 +258,10 @@ router.post(
     submitContactMessage
 );
 
-/**
- * @route   GET /api/contact/stats/overview
- * @desc    Get contact messages statistics
- * @access  Private/Admin
- */
 router.get('/stats/overview', authenticate, requireRole('admin'), getContactStats);
-
-/**
- * @route   GET /api/contact
- * @desc    Get all contact messages
- * @access  Private/Admin
- */
 router.get('/', authenticate, requireRole('admin'), getAllContactMessages);
-
-/**
- * @route   GET /api/contact/:id
- * @desc    Get single contact message
- * @access  Private/Admin
- */
 router.get('/:id', authenticate, requireRole('admin'), getContactMessageById);
 
-/**
- * @route   PATCH /api/contact/:id
- * @desc    Update contact message status
- * @access  Private/Admin
- */
 router.patch(
     '/:id',
     authenticate,
@@ -91,11 +274,6 @@ router.patch(
     updateContactMessageStatus
 );
 
-/**
- * @route   DELETE /api/contact/:id
- * @desc    Delete contact message
- * @access  Private/Admin
- */
 router.delete('/:id', authenticate, requireRole('admin'), deleteContactMessage);
 
 export default router;

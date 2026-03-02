@@ -11,23 +11,27 @@ const router = Router();
  *     tags:
  *       - Authentication
  *     summary: Login user
+ *     security: []
  *     description: Login with email and password to get session ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
  *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
  *       401:
  *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post('/login', login);
 
@@ -46,12 +50,25 @@ router.post('/login', login);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: '#/components/schemas/RegisterInput'
  *     responses:
  *       201:
  *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
  *       403:
- *         description: Unauthorized
+ *         description: Insufficient permissions
+ *       409:
+ *         description: Email already exists
  */
 router.post('/register', authenticate, authorize('admin'), register);
 
@@ -68,8 +85,21 @@ router.post('/register', authenticate, authorize('admin'), register);
  *     responses:
  *       200:
  *         description: User data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get('/me', authenticate, getMe);
 
@@ -88,17 +118,16 @@ router.get('/me', authenticate, getMe);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               currentPassword:
- *                 type: string
- *               newPassword:
- *                 type: string
+ *             $ref: '#/components/schemas/ChangePasswordInput'
  *     responses:
  *       200:
  *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Current password is incorrect
  */
 router.put('/change-password', authenticate, changePassword);
 
@@ -115,6 +144,10 @@ router.put('/change-password', authenticate, changePassword);
  *     responses:
  *       200:
  *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
  *       401:
  *         description: Unauthorized
  */

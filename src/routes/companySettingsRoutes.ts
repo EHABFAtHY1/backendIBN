@@ -14,16 +14,25 @@ const router = Router();
  *   get:
  *     tags:
  *       - Company Settings
- *     summary: Get company settings
- *     description: Retrieve all company settings (public access)
+ *     summary: Get company settings (public)
+ *     security: []
+ *     description: Retrieve all company settings
  *     responses:
  *       200:
  *         description: Company settings retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/CompanySettings'
  *   post:
  *     tags:
  *       - Company Settings
- *     summary: Create company settings
- *     description: Create company settings (admin only)
+ *     summary: Create company settings (admin only)
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -31,17 +40,25 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: '#/components/schemas/CreateCompanySettingsInput'
  *     responses:
  *       201:
  *         description: Company settings created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/CompanySettings'
  *       409:
  *         description: Company settings already exist
  *   put:
  *     tags:
  *       - Company Settings
- *     summary: Update company settings
- *     description: Update company settings (admin only)
+ *     summary: Update company settings (admin only)
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -49,10 +66,21 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: '#/components/schemas/CreateCompanySettingsInput'
  *     responses:
  *       200:
  *         description: Company settings updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/CompanySettings'
+ *       404:
+ *         description: Company settings not found
  */
 
 // Public routes

@@ -124,6 +124,11 @@ describe('Projects Tests', () => {
                     durationEn: '12 Months',
                     teamAr: '25 عضو',
                     teamEn: '25 Members',
+                    workersCount: 50,
+                    engineersCount: 10,
+                    injuredCount: 0,
+                    actualDurationAr: '14 شهر',
+                    actualDurationEn: '14 Months',
                     area: '850 m²',
                     status: 'Completed',
                     categoryId: testCategory._id.toString(),
@@ -136,6 +141,11 @@ describe('Projects Tests', () => {
             expect(response.body.data.titleAr).toBe('فيلا سكنية');
             expect(response.body.data.titleEn).toBe('Residential Villa');
             expect(response.body.data._id).toBeDefined();
+            expect(response.body.data.workersCount).toBe(50);
+            expect(response.body.data.engineersCount).toBe(10);
+            expect(response.body.data.injuredCount).toBe(0);
+            expect(response.body.data.actualDurationAr).toBe('14 شهر');
+            expect(response.body.data.actualDurationEn).toBe('14 Months');
         });
     });
 

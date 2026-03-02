@@ -12,42 +12,32 @@ import { authenticate, requireRole } from '../middleware/auth';
 
 const router = Router();
 
-// Public routes - Anyone can view employee directory
 /**
  * @swagger
  * /employees/directory:
  *   get:
  *     tags:
  *       - Employees
- *     summary: Get employee directory
+ *     summary: Get employee directory (public)
+ *     security: []
  *     description: View list of all active employees with public information
  *     responses:
  *       200:
  *         description: Employee directory
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Employee'
  */
 router.get('/directory', getEmployeeDirectory);
 
-/**
- * @swagger
- * /employees/{id}:
- *   get:
- *     tags:
- *       - Employees
- *     summary: Get employee public profile
- *     description: View a single employee's public information
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Employee profile
- */
-router.get('/:id', getEmployee);
-
-// Protected routes - Employees can view their own full profile
 /**
  * @swagger
  * /employees/me:
@@ -61,20 +51,62 @@ router.get('/:id', getEmployee);
  *     responses:
  *       200:
  *         description: Your employee profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Employee'
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: Employee profile not found
  */
 router.get('/me', authenticate, getMyProfile);
 
-// Admin routes - All CRUD operations
+/**
+ * @swagger
+ * /employees/{id}:
+ *   get:
+ *     tags:
+ *       - Employees
+ *     summary: Get employee public profile
+ *     security: []
+ *     description: View a single employee's public information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Employee profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Employee'
+ *       404:
+ *         description: Employee not found
+ */
+router.get('/:id', getEmployee);
+
 /**
  * @swagger
  * /employees:
  *   post:
  *     tags:
  *       - Employees
- *     summary: Create new employee
- *     description: Create a new employee with user account (Admin only)
+ *     summary: Create new employee (admin only)
+ *     description: Create a new employee with user account
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -82,45 +114,21 @@ router.get('/me', authenticate, getMyProfile);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - firstName
- *               - lastName
- *               - email
- *               - password
- *               - phoneNumber
- *               - employeeId
- *               - position
- *               - department
- *               - hireDate
- *             properties:
- *               firstName:
- *                 type: string
- *               lastName:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               phoneNumber:
- *                 type: string
- *               employeeId:
- *                 type: string
- *               position:
- *                 type: string
- *                 enum: [engineer, technician, supervisor, manager]
- *               department:
- *                 type: string
- *               hireDate:
- *                 type: string
- *                 format: date
- *               skills:
- *                 type: array
- *               salary:
- *                 type: number
+ *             $ref: '#/components/schemas/CreateEmployeeInput'
  *     responses:
  *       201:
  *         description: Employee created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Employee'
+ *                 message:
+ *                   type: string
  *       401:
  *         description: Unauthorized
  *       403:
@@ -134,8 +142,7 @@ router.post('/', authenticate, requireRole('admin'), createEmployee);
  *   put:
  *     tags:
  *       - Employees
- *     summary: Update employee
- *     description: Update employee information (Admin only)
+ *     summary: Update employee (admin only)
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -149,10 +156,21 @@ router.post('/', authenticate, requireRole('admin'), createEmployee);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: '#/components/schemas/CreateEmployeeInput'
  *     responses:
  *       200:
  *         description: Employee updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Employee'
+ *       404:
+ *         description: Employee not found
  */
 router.put('/:id', authenticate, requireRole('admin'), updateEmployee);
 
@@ -162,8 +180,8 @@ router.put('/:id', authenticate, requireRole('admin'), updateEmployee);
  *   put:
  *     tags:
  *       - Employees
- *     summary: Update employee projects
- *     description: Add or update projects assigned to employee (Admin only)
+ *     summary: Update employee projects (admin only)
+ *     description: Add or update projects assigned to employee
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -178,14 +196,28 @@ router.put('/:id', authenticate, requireRole('admin'), updateEmployee);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - projectIds
  *             properties:
  *               projectIds:
  *                 type: array
  *                 items:
  *                   type: string
+ *                 description: Array of Project IDs
  *     responses:
  *       200:
  *         description: Projects updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Employee'
+ *       404:
+ *         description: Employee not found
  */
 router.put('/:id/projects', authenticate, requireRole('admin'), updateEmployeeProjects);
 
@@ -195,8 +227,8 @@ router.put('/:id/projects', authenticate, requireRole('admin'), updateEmployeePr
  *   delete:
  *     tags:
  *       - Employees
- *     summary: Delete employee
- *     description: Delete employee and their user account (Admin only)
+ *     summary: Delete employee (admin only)
+ *     description: Delete employee and their user account
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -208,6 +240,12 @@ router.put('/:id/projects', authenticate, requireRole('admin'), updateEmployeePr
  *     responses:
  *       200:
  *         description: Employee deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       404:
+ *         description: Employee not found
  */
 router.delete('/:id', authenticate, requireRole('admin'), deleteEmployee);
 

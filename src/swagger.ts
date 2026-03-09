@@ -297,19 +297,18 @@ const options: swaggerJsdoc.Options = {
                     type: 'object',
                     properties: {
                         _id: { type: 'string' },
-                        title: { $ref: '#/components/schemas/BilingualField' },
+                        titleAr: { type: 'string' },
+                        titleEn: { type: 'string' },
                         icon: { type: 'string' },
-                        subDepartments: {
+                        sections: {
                             type: 'array',
                             items: {
                                 type: 'object',
                                 properties: {
-                                    title: { $ref: '#/components/schemas/BilingualField' },
+                                    _id: { type: 'string' },
+                                    titleAr: { type: 'string' },
+                                    titleEn: { type: 'string' },
                                     icon: { type: 'string' },
-                                    sections: {
-                                        type: 'array',
-                                        items: { $ref: '#/components/schemas/BilingualField' },
-                                    },
                                 },
                             },
                         },
@@ -321,24 +320,50 @@ const options: swaggerJsdoc.Options = {
                 },
                 CreateDepartmentInput: {
                     type: 'object',
-                    required: ['title'],
+                    required: ['titleAr', 'titleEn'],
                     properties: {
-                        title: { $ref: '#/components/schemas/BilingualField' },
+                        titleAr: { type: 'string' },
+                        titleEn: { type: 'string' },
                         icon: { type: 'string' },
-                        subDepartments: {
+                        sections: {
                             type: 'array',
                             items: {
                                 type: 'object',
                                 properties: {
-                                    title: { $ref: '#/components/schemas/BilingualField' },
+                                    titleAr: { type: 'string' },
+                                    titleEn: { type: 'string' },
                                     icon: { type: 'string' },
-                                    sections: {
-                                        type: 'array',
-                                        items: { $ref: '#/components/schemas/BilingualField' },
-                                    },
                                 },
                             },
                         },
+                        order: { type: 'integer' },
+                        isVisible: { type: 'boolean' },
+                    },
+                },
+                QualityStandard: {
+                    type: 'object',
+                    properties: {
+                        _id: { type: 'string' },
+                        titleAr: { type: 'string' },
+                        titleEn: { type: 'string' },
+                        descriptionAr: { type: 'string' },
+                        descriptionEn: { type: 'string' },
+                        icon: { type: 'string' },
+                        order: { type: 'integer' },
+                        isVisible: { type: 'boolean' },
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' },
+                    },
+                },
+                CreateQualityStandardInput: {
+                    type: 'object',
+                    required: ['titleAr', 'titleEn', 'descriptionAr', 'descriptionEn'],
+                    properties: {
+                        titleAr: { type: 'string' },
+                        titleEn: { type: 'string' },
+                        descriptionAr: { type: 'string' },
+                        descriptionEn: { type: 'string' },
+                        icon: { type: 'string' },
                         order: { type: 'integer' },
                         isVisible: { type: 'boolean' },
                     },
@@ -596,6 +621,7 @@ const options: swaggerJsdoc.Options = {
             { name: 'Categories', description: 'Project category management' },
             { name: 'Services', description: 'Service management' },
             { name: 'Departments', description: 'Department management' },
+            { name: 'Quality Standards', description: 'Quality standards management' },
             { name: 'Employees', description: 'Employee management' },
             { name: 'Partners', description: 'Partner management' },
             { name: 'Media', description: 'Media file upload and management' },

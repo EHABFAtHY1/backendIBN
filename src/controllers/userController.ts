@@ -101,7 +101,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
 }
 
 /**
- * PUT /api/users/:id
+ * PATCH /api/users/:id
  * Update user (admin only)
  */
 export async function updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {

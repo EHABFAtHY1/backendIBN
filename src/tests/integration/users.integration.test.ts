@@ -141,7 +141,7 @@ describe('Users Tests', () => {
         });
     });
 
-    describe('PUT /api/users/:id', () => {
+    describe('PATCH /api/users/:id', () => {
         let updateUserId: string;
 
         beforeAll(async () => {
@@ -156,7 +156,7 @@ describe('Users Tests', () => {
 
         it('should fail without authentication', async () => {
             const response = await request(app)
-                .put(`/api/users/${updateUserId}`)
+                .patch(`/api/users/${updateUserId}`)
                 .send({
                     tel: '+966500000001',
                 });
@@ -166,7 +166,7 @@ describe('Users Tests', () => {
 
         it('should update user successfully', async () => {
             const response = await request(app)
-                .put(`/api/users/${updateUserId}`)
+                .patch(`/api/users/${updateUserId}`)
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
                     tel: '+966500000001',
@@ -183,7 +183,7 @@ describe('Users Tests', () => {
 
         it('should not update protected fields', async () => {
             const response = await request(app)
-                .put(`/api/users/${updateUserId}`)
+                .patch(`/api/users/${updateUserId}`)
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
                     role: 'admin', // This should not change based on whitelist

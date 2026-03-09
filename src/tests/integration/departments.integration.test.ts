@@ -8,7 +8,6 @@ import Department from '../../models/Department';
 
 describe('Departments Tests', () => {
     let adminSession: string;
-    let adminUser: any;
 
     beforeAll(async () => {
         await connectDB();
@@ -16,7 +15,7 @@ describe('Departments Tests', () => {
         await Session.deleteMany({});
         await Department.deleteMany({});
 
-        adminUser = await User.create({
+        const adminUser = await User.create({
             userName: 'admin',
             email: 'admin@test.com',
             passwordHash: 'adminpass',
@@ -50,12 +49,11 @@ describe('Departments Tests', () => {
 
     describe('POST /api/departments', () => {
         it('should fail without authentication', async () => {
-            const response = await request(app)
-                .post('/api/departments')
-                .send({
-                    title: { ar: 'قسم هندسي', en: 'Engineering Department' },
-                    icon: 'engineering',
-                });
+            const response = await request(app).post('/api/departments').send({
+                titleAr: 'قسم هندسي',
+                titleEn: 'Engineering Department',
+                icon: 'engineering',
+            });
 
             expect(response.status).toBe(401);
         });
@@ -65,13 +63,14 @@ describe('Departments Tests', () => {
                 .post('/api/departments')
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
-                    title: { ar: 'قسم هندسي', en: 'Engineering Department' },
+                    titleAr: 'قسم هندسي',
+                    titleEn: 'Engineering Department',
                     icon: 'engineering',
-                    subDepartments: [
+                    sections: [
                         {
-                            title: { ar: 'هندسة مدنية', en: 'Civil Engineering' },
+                            titleAr: 'هندسة مدنية',
+                            titleEn: 'Civil Engineering',
                             icon: 'civil',
-                            sections: [{ ar: 'التصميم', en: 'Design' }],
                         },
                     ],
                     order: 1,
@@ -80,10 +79,10 @@ describe('Departments Tests', () => {
 
             expect(response.status).toBe(201);
             expect(response.body.success).toBe(true);
-            expect(response.body.data.title.ar).toBe('قسم هندسي');
-            expect(response.body.data.title.en).toBe('Engineering Department');
-            expect(response.body.data.subDepartments).toHaveLength(1);
-            expect(response.body.data.subDepartments[0].title.ar).toBe('هندسة مدنية');
+            expect(response.body.data.titleAr).toBe('قسم هندسي');
+            expect(response.body.data.titleEn).toBe('Engineering Department');
+            expect(response.body.data.sections).toHaveLength(1);
+            expect(response.body.data.sections[0].titleAr).toBe('هندسة مدنية');
         });
     });
 
@@ -94,12 +93,13 @@ describe('Departments Tests', () => {
                 .put(`/api/departments/${dept!._id}`)
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
-                    title: { ar: 'قسم هندسي محدث', en: 'Updated Engineering' },
+                    titleAr: 'قسم هندسي محدث',
+                    titleEn: 'Updated Engineering',
                 });
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(response.body.data.title.ar).toBe('قسم هندسي محدث');
+            expect(response.body.data.titleAr).toBe('قسم هندسي محدث');
         });
 
         it('should return 404 for non-existent department', async () => {
@@ -107,7 +107,7 @@ describe('Departments Tests', () => {
             const response = await request(app)
                 .put(`/api/departments/${fakeId}`)
                 .set('Authorization', `Bearer ${adminSession}`)
-                .send({ title: { ar: 'test', en: 'test' } });
+                .send({ titleAr: 'test', titleEn: 'test' });
 
             expect(response.status).toBe(404);
         });
@@ -116,7 +116,8 @@ describe('Departments Tests', () => {
     describe('DELETE /api/departments/:id', () => {
         it('should delete department successfully', async () => {
             const dept = await Department.create({
-                title: { ar: 'للحذف', en: 'To Delete' },
+                titleAr: 'للحذف',
+                titleEn: 'To Delete',
                 icon: 'delete',
             });
 
@@ -135,7 +136,8 @@ describe('Departments Tests', () => {
     describe('GET /api/departments/admin/all', () => {
         it('should return all departments including hidden for admin', async () => {
             await Department.create({
-                title: { ar: 'مخفي', en: 'Hidden' },
+                titleAr: 'مخفي',
+                titleEn: 'Hidden',
                 icon: 'hidden',
                 isVisible: false,
             });

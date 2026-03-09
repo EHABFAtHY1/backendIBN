@@ -18,7 +18,7 @@ export async function getDepartments(req: Request, res: Response, next: NextFunc
         const dto = req.query as PaginationDto;
         const { page, size, skip } = parsePaginationParams(req.query);
 
-        const searchFields = ['name', 'description'];
+        const searchFields = ['titleAr', 'titleEn', 'sections.titleAr', 'sections.titleEn'];
         const query = buildMongoDBQuery({ ...dto, isVisible: true }, searchFields);
 
         const total = await Department.countDocuments(query);
@@ -55,7 +55,7 @@ export async function getAllDepartments(req: Request, res: Response, next: NextF
         const dto = req.query as PaginationDto;
         const { page, size, skip } = parsePaginationParams(req.query);
 
-        const searchFields = ['name', 'description'];
+        const searchFields = ['titleAr', 'titleEn', 'sections.titleAr', 'sections.titleEn'];
         const query = buildMongoDBQuery(dto, searchFields);
 
         const total = await Department.countDocuments(query);

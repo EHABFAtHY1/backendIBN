@@ -111,10 +111,10 @@ const router = Router();
  *                   $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
- *   put:
+ *   patch:
  *     tags:
  *       - Users
- *     summary: Update user (admin only)
+ *     summary: Partially update user (admin only)
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -170,7 +170,7 @@ const router = Router();
 router.get('/', authenticate, authorize('admin'), getUsers);
 router.get('/:id', authenticate, authorize('admin'), getUser);
 router.post('/', authenticate, authorize('admin'), createUser);
-router.put('/:id', authenticate, authorize('admin'), updateUser);
+router.patch('/:id', authenticate, authorize('admin'), updateUser);
 router.delete('/:id', authenticate, authorize('admin'), deleteUser);
 
 export default router;

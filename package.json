@@ -8,7 +8,7 @@
         "build": "tsc",
         "start": "node dist/server.js",
         "seed": "ts-node src/seed.ts",
-        "docs": "node swagger.js",
+        "docs": "ts-node src/generateSwagger.ts",
         "test": "jest",
         "prod": "npm run build && npm run seed && npm run docs && npm run start",
         "vercel:deploy": "npm run build && vercel --prod",
@@ -24,7 +24,6 @@
         "docker:build": "docker-compose build --no-cache"
     },
     "dependencies": {
-        "@autp-swteam/swagger-autogen": "^1.0.0",
         "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
@@ -33,7 +32,6 @@
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.10.1",
         "multer": "^1.4.5-lts.1",
-        "swagger-autogen": "^2.23.7",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1"
     },

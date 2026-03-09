@@ -14,11 +14,11 @@ const options: swaggerJsdoc.Options = {
         },
         servers: [
             {
-                url: 'http://localhost:5000/api',
+                url: process.env.SWAGGER_DEV_URL || 'http://localhost:5000/api',
                 description: 'Development server',
             },
             {
-                url: 'https://api.ibnalshaekh.com',
+                url: process.env.SWAGGER_PROD_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api` : 'https://api.ibnalshaekh.com'),
                 description: 'Production server',
             },
         ],

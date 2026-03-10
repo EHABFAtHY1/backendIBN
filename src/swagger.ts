@@ -64,6 +64,19 @@ const options: swaggerJsdoc.Options = {
                         descriptionEn: { type: 'string' },
                     },
                 },
+                UpdateUserInput: {
+                    type: 'object',
+                    properties: {
+                        userName: { type: 'string' },
+                        email: { type: 'string', format: 'email' },
+                        role: { type: 'string', enum: ['admin', 'user'] },
+                        tel: { type: 'string' },
+                        photo: { type: 'string' },
+                        yearsOfExp: { type: 'integer' },
+                        descriptionAr: { type: 'string' },
+                        descriptionEn: { type: 'string' },
+                    },
+                },
                 // ─── Session ───
                 Session: {
                     type: 'object',
@@ -98,6 +111,10 @@ const options: swaggerJsdoc.Options = {
                         area: { type: 'string' },
                         status: { type: 'string' },
                         categoryId: { type: 'string', description: 'Reference to Category' },
+                        category: {
+                            allOf: [{ $ref: '#/components/schemas/Category' }],
+                            nullable: true,
+                        },
                         techStack: { type: 'array', items: { type: 'string' } },
                         gallery: { type: 'array', items: { type: 'string' } },
                         createdAt: { type: 'string', format: 'date-time' },
@@ -174,6 +191,10 @@ const options: swaggerJsdoc.Options = {
                         color: { type: 'string', description: 'Hex color code' },
                         countAr: { type: 'string' },
                         countEn: { type: 'string' },
+                        projects: {
+                            type: 'array',
+                            items: { $ref: '#/components/schemas/Project' },
+                        },
                         createdAt: { type: 'string', format: 'date-time' },
                         updatedAt: { type: 'string', format: 'date-time' },
                     },
@@ -299,19 +320,11 @@ const options: swaggerJsdoc.Options = {
                         _id: { type: 'string' },
                         titleAr: { type: 'string' },
                         titleEn: { type: 'string' },
-                        icon: { type: 'string' },
-                        sections: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                properties: {
-                                    _id: { type: 'string' },
-                                    titleAr: { type: 'string' },
-                                    titleEn: { type: 'string' },
-                                    icon: { type: 'string' },
-                                },
-                            },
-                        },
+                        descriptionAr: { type: 'string' },
+                        descriptionEn: { type: 'string' },
+                        color: { type: 'string' },
+                        countAr: { type: 'string' },
+                        countEn: { type: 'string' },
                         order: { type: 'integer' },
                         isVisible: { type: 'boolean' },
                         createdAt: { type: 'string', format: 'date-time' },
@@ -320,22 +333,15 @@ const options: swaggerJsdoc.Options = {
                 },
                 CreateDepartmentInput: {
                     type: 'object',
-                    required: ['titleAr', 'titleEn'],
+                    required: ['titleAr', 'titleEn', 'descriptionAr', 'descriptionEn', 'color', 'countAr', 'countEn'],
                     properties: {
                         titleAr: { type: 'string' },
                         titleEn: { type: 'string' },
-                        icon: { type: 'string' },
-                        sections: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                properties: {
-                                    titleAr: { type: 'string' },
-                                    titleEn: { type: 'string' },
-                                    icon: { type: 'string' },
-                                },
-                            },
-                        },
+                        descriptionAr: { type: 'string' },
+                        descriptionEn: { type: 'string' },
+                        color: { type: 'string' },
+                        countAr: { type: 'string' },
+                        countEn: { type: 'string' },
                         order: { type: 'integer' },
                         isVisible: { type: 'boolean' },
                     },

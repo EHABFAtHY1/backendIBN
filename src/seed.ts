@@ -174,40 +174,48 @@ const departmentsData = [
     {
         titleAr: 'ÞÓã ÇáåäÏÓÉ',
         titleEn: 'Engineering Department',
-        icon: 'Hammer',
-        sections: [
-            { titleAr: 'ÇáåäÏÓÉ ÇáãÏäíÉ', titleEn: 'Civil Engineering', icon: 'Building' },
-            { titleAr: 'ÇáåäÏÓÉ ÇáãÚãÇÑíÉ', titleEn: 'Architecture', icon: 'PencilRuler' },
-        ],
+        descriptionAr: 'ÅÏÇÑÉ æÊäÝíÐ ÇáÃÚãÇá ÇáåäÏÓíÉ æÇáÅÔÑÇÝ Úáì ÇáÍáæá ÇáÝäíÉ ááãÔÑæÚÇÊ.',
+        descriptionEn: 'Managing engineering execution and supervising technical solutions across projects.',
+        color: 'from-[#c5a572] to-[#a88b4d]',
+        countAr: '25+',
+        countEn: '25+',
         order: 1,
         isVisible: true,
     },
     {
         titleAr: 'ÞÓã ÇáãÔÇÑíÚ',
         titleEn: 'Projects Department',
-        icon: 'Briefcase',
-        sections: [{ titleAr: 'ÅÏÇÑÉ ÇáãÔÇÑíÚ', titleEn: 'Project Management', icon: 'ClipboardList' }],
+        descriptionAr: 'ãÊÇÈÚÉ ÊÎØíØ æÊäÝíÐ æÌÏæáÉ ÇáãÔÑæÚÇÊ æÖÈØ ÇáÊÓáíã.',
+        descriptionEn: 'Overseeing project planning, execution schedules, and delivery control.',
+        color: 'from-[#1a1a1a] to-[#4a4a4a]',
+        countAr: '18+',
+        countEn: '18+',
         order: 2,
         isVisible: true,
     },
     {
         titleAr: 'ÞÓã ÇáãæÇÑÏ ÇáÈÔÑíÉ',
         titleEn: 'HR Department',
-        icon: 'Users',
-        sections: [{ titleAr: 'ÇáÊæÙíÝ æÇáÊØæíÑ', titleEn: 'Recruitment & Development', icon: 'HeadsetIcon' }],
+        descriptionAr: 'ÅÏÇÑÉ ÇáÊæÙíÝ æÇáÊØæíÑ æÇáÚãáíÇÊ ÇáãÑÊÈØÉ ÈÇáãæÇÑÏ ÇáÈÔÑíÉ.',
+        descriptionEn: 'Handling recruitment, development, and human resources operations.',
+        color: 'from-[#2c3e50] to-[#34495e]',
+        countAr: '12+',
+        countEn: '12+',
         order: 3,
         isVisible: true,
     },
     {
         titleAr: 'ÞÓã ÇáãÇáíÉ',
         titleEn: 'Finance Department',
-        icon: 'DollarSign',
-        sections: [{ titleAr: 'ÇáãÍÇÓÈÉ', titleEn: 'Accounting', icon: 'Receipt' }],
+        descriptionAr: 'ÅÏÇÑÉ ÇáãÍÇÓÈÉ æÇáÊÞÇÑíÑ ÇáãÇáíÉ æãÑÇÞÈÉ ÇáãÕÑæÝÇÊ æÇáÅíÑÇÏÇÊ.',
+        descriptionEn: 'Managing accounting, financial reporting, and expense and revenue control.',
+        color: 'from-[#27ae60] to-[#2ecc71]',
+        countAr: '8+',
+        countEn: '8+',
         order: 4,
         isVisible: true,
     },
 ];
-
 const qualityStandardsData = [
     {
         titleAr: 'ÇáÓáÇãÉ ÇáãåäíÉ',
@@ -458,9 +466,9 @@ async function seed() {
 
         console.log('ðŸ—ï¸ Seeding projects...');
         // Update projects with actual category IDs
-        const projectsWithCategoryIds = projectsData.map((proj) => ({
+        const projectsWithCategoryIds = projectsData.map((proj, index) => ({
             ...proj,
-            categoryId: categories[0]._id, // Assign residential category
+            categoryId: categories[index % categories.length]._id,
         }));
         await Project.insertMany(projectsWithCategoryIds);
 
@@ -532,4 +540,7 @@ async function seed() {
 }
 
 seed();
+
+
+
 

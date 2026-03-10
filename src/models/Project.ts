@@ -57,7 +57,18 @@ const ProjectSchema = new Schema<IProject>(
         techStack: { type: [String], default: [] },
         gallery: { type: [String], default: [] },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
 );
+
+ProjectSchema.virtual('category', {
+    ref: 'Category',
+    localField: 'categoryId',
+    foreignField: '_id',
+    justOne: true,
+});
 
 export default mongoose.model<IProject>('Project', ProjectSchema);

@@ -123,6 +123,40 @@
           }
         }
       },
+      "UpdateUserInput": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "user"
+            ]
+          },
+          "tel": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string"
+          },
+          "yearsOfExp": {
+            "type": "integer"
+          },
+          "descriptionAr": {
+            "type": "string"
+          },
+          "descriptionEn": {
+            "type": "string"
+          }
+        }
+      },
       "Session": {
         "type": "object",
         "properties": {
@@ -214,6 +248,14 @@
           "categoryId": {
             "type": "string",
             "description": "Reference to Category"
+          },
+          "category": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              }
+            ],
+            "nullable": true
           },
           "techStack": {
             "type": "array",
@@ -428,6 +470,12 @@
           },
           "countEn": {
             "type": "string"
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Project"
+            }
           },
           "createdAt": {
             "type": "string",
@@ -673,31 +721,26 @@
           "_id": {
             "type": "string"
           },
-          "title": {
-            "$ref": "#/components/schemas/BilingualField"
-          },
-          "icon": {
+          "titleAr": {
             "type": "string"
           },
-          "subDepartments": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "$ref": "#/components/schemas/BilingualField"
-                },
-                "icon": {
-                  "type": "string"
-                },
-                "sections": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BilingualField"
-                  }
-                }
-              }
-            }
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": "string"
+          },
+          "descriptionEn": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "countAr": {
+            "type": "string"
+          },
+          "countEn": {
+            "type": "string"
           },
           "order": {
             "type": "integer"
@@ -718,34 +761,104 @@
       "CreateDepartmentInput": {
         "type": "object",
         "required": [
-          "title"
+          "titleAr",
+          "titleEn",
+          "descriptionAr",
+          "descriptionEn",
+          "color",
+          "countAr",
+          "countEn"
         ],
         "properties": {
-          "title": {
-            "$ref": "#/components/schemas/BilingualField"
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": "string"
+          },
+          "descriptionEn": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "countAr": {
+            "type": "string"
+          },
+          "countEn": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "isVisible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "QualityStandard": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": "string"
+          },
+          "descriptionEn": {
+            "type": "string"
           },
           "icon": {
             "type": "string"
           },
-          "subDepartments": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "$ref": "#/components/schemas/BilingualField"
-                },
-                "icon": {
-                  "type": "string"
-                },
-                "sections": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BilingualField"
-                  }
-                }
-              }
-            }
+          "order": {
+            "type": "integer"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateQualityStandardInput": {
+        "type": "object",
+        "required": [
+          "titleAr",
+          "titleEn",
+          "descriptionAr",
+          "descriptionEn"
+        ],
+        "properties": {
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": "string"
+          },
+          "descriptionEn": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
           },
           "order": {
             "type": "integer"
@@ -1402,6 +1515,10 @@
     {
       "name": "Departments",
       "description": "Department management"
+    },
+    {
+      "name": "Quality Standards",
+      "description": "Quality standards management"
     },
     {
       "name": "Employees",
@@ -3809,6 +3926,128 @@
         }
       }
     },
+    "/quality-standards": {
+      "get": {
+        "tags": [
+          "Quality Standards"
+        ],
+        "summary": "Get visible quality standards (public)",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Quality standards retrieved successfully"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Quality Standards"
+        ],
+        "summary": "Create quality standard (admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQualityStandardInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Quality standard created successfully"
+          }
+        }
+      }
+    },
+    "/quality-standards/admin/all": {
+      "get": {
+        "tags": [
+          "Quality Standards"
+        ],
+        "summary": "Get all quality standards including hidden (admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All quality standards retrieved successfully"
+          }
+        }
+      }
+    },
+    "/quality-standards/{id}": {
+      "put": {
+        "tags": [
+          "Quality Standards"
+        ],
+        "summary": "Update quality standard (admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQualityStandardInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quality standard updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Quality Standards"
+        ],
+        "summary": "Delete quality standard (admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quality standard deleted successfully"
+          }
+        }
+      }
+    },
     "/services": {
       "get": {
         "tags": [
@@ -4390,7 +4629,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUserInput"
+                "$ref": "#/components/schemas/UpdateUserInput"
               }
             }
           }
@@ -4465,11 +4704,11 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "Users"
         ],
-        "summary": "Update user (admin only)",
+        "summary": "Partially update user (admin only)",
         "security": [
           {
             "bearerAuth": []

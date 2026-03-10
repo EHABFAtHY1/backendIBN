@@ -9,6 +9,7 @@ export interface IProjectCategory extends Document {
     color: string;
     countAr: string;
     countEn: string;
+    projects?: mongoose.Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -23,7 +24,17 @@ const ProjectCategorySchema = new Schema<IProjectCategory>(
         countAr: { type: String, required: true },
         countEn: { type: String, required: true },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
 );
+
+ProjectCategorySchema.virtual('projects', {
+    ref: 'Project',
+    localField: '_id',
+    foreignField: 'categoryId',
+});
 
 export default mongoose.model<IProjectCategory>('Category', ProjectCategorySchema);

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import ProjectCategory from '../models/ProjectCategory';
-import Project from '../models/Project';
 import { AppError } from '../utils/AppError';
 
 /**
@@ -14,6 +13,7 @@ export async function getCategories(req: Request, res: Response, next: NextFunct
         const skip = (page - 1) * limit;
 
         const categories = await ProjectCategory.find()
+            .populate('projects')
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
@@ -41,21 +41,15 @@ export async function getCategories(req: Request, res: Response, next: NextFunct
  */
 export async function getCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const category = await ProjectCategory.findById(req.params.id);
+        const category = await ProjectCategory.findById(req.params.id).populate('projects');
 
         if (!category) {
             throw new AppError('Category not found.', 404);
         }
 
-        // Get projects in this category
-        const projects = await Project.find({ categoryId: req.params.id });
-
         res.json({
             success: true,
-            data: {
-                category,
-                projects,
-            },
+            data: category,
         });
     } catch (error) {
         next(error);

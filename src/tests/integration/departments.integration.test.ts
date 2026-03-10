@@ -50,9 +50,13 @@ describe('Departments Tests', () => {
     describe('POST /api/departments', () => {
         it('should fail without authentication', async () => {
             const response = await request(app).post('/api/departments').send({
-                titleAr: 'قسم هندسي',
+                titleAr: 'قسم الهندسة',
                 titleEn: 'Engineering Department',
-                icon: 'engineering',
+                descriptionAr: 'وصف القسم الهندسي',
+                descriptionEn: 'Engineering department description',
+                color: '#c5a572',
+                countAr: '25+',
+                countEn: '25+',
             });
 
             expect(response.status).toBe(401);
@@ -63,26 +67,22 @@ describe('Departments Tests', () => {
                 .post('/api/departments')
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
-                    titleAr: 'قسم هندسي',
+                    titleAr: 'قسم الهندسة',
                     titleEn: 'Engineering Department',
-                    icon: 'engineering',
-                    sections: [
-                        {
-                            titleAr: 'هندسة مدنية',
-                            titleEn: 'Civil Engineering',
-                            icon: 'civil',
-                        },
-                    ],
+                    descriptionAr: 'وصف القسم الهندسي',
+                    descriptionEn: 'Engineering department description',
+                    color: '#c5a572',
+                    countAr: '25+',
+                    countEn: '25+',
                     order: 1,
                     isVisible: true,
                 });
 
             expect(response.status).toBe(201);
             expect(response.body.success).toBe(true);
-            expect(response.body.data.titleAr).toBe('قسم هندسي');
-            expect(response.body.data.titleEn).toBe('Engineering Department');
-            expect(response.body.data.sections).toHaveLength(1);
-            expect(response.body.data.sections[0].titleAr).toBe('هندسة مدنية');
+            expect(response.body.data.titleAr).toBe('قسم الهندسة');
+            expect(response.body.data.descriptionAr).toBe('وصف القسم الهندسي');
+            expect(response.body.data.color).toBe('#c5a572');
         });
     });
 
@@ -93,13 +93,15 @@ describe('Departments Tests', () => {
                 .put(`/api/departments/${dept!._id}`)
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
-                    titleAr: 'قسم هندسي محدث',
-                    titleEn: 'Updated Engineering',
+                    titleAr: 'قسم الهندسة المحدث',
+                    descriptionAr: 'وصف محدث',
+                    color: '#a88b4d',
                 });
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(response.body.data.titleAr).toBe('قسم هندسي محدث');
+            expect(response.body.data.titleAr).toBe('قسم الهندسة المحدث');
+            expect(response.body.data.color).toBe('#a88b4d');
         });
 
         it('should return 404 for non-existent department', async () => {
@@ -118,7 +120,11 @@ describe('Departments Tests', () => {
             const dept = await Department.create({
                 titleAr: 'للحذف',
                 titleEn: 'To Delete',
-                icon: 'delete',
+                descriptionAr: 'وصف',
+                descriptionEn: 'Description',
+                color: '#000000',
+                countAr: '1',
+                countEn: '1',
             });
 
             const response = await request(app)
@@ -138,7 +144,11 @@ describe('Departments Tests', () => {
             await Department.create({
                 titleAr: 'مخفي',
                 titleEn: 'Hidden',
-                icon: 'hidden',
+                descriptionAr: 'وصف مخفي',
+                descriptionEn: 'Hidden description',
+                color: '#333333',
+                countAr: '0',
+                countEn: '0',
                 isVisible: false,
             });
 

@@ -65,7 +65,7 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateUserInput'
+ *             $ref: '#/components/schemas/UpdateUserInput'
  *     responses:
  *       201:
  *         description: User created successfully

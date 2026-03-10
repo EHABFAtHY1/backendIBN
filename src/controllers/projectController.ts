@@ -14,7 +14,7 @@ export async function getProjects(req: Request, res: Response, next: NextFunctio
         const skip = (page - 1) * limit;
 
         const projects = await Project.find()
-            .populate('categoryId')
+            .populate('category')
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
@@ -42,7 +42,7 @@ export async function getProjects(req: Request, res: Response, next: NextFunctio
  */
 export async function getProject(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const project = await Project.findById(req.params.id).populate('categoryId');
+        const project = await Project.findById(req.params.id).populate('category');
 
         if (!project) {
             throw new AppError('Project not found.', 404);
@@ -63,7 +63,7 @@ export async function getProject(req: Request, res: Response, next: NextFunction
  */
 export async function getProjectsByCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const projects = await Project.find({ categoryId: req.params.categoryId }).populate('categoryId');
+        const projects = await Project.find({ categoryId: req.params.categoryId }).populate('category');
 
         res.json({
             success: true,
@@ -150,7 +150,7 @@ export async function createProject(req: Request, res: Response, next: NextFunct
             gallery: gallery || [],
         });
 
-        await project.populate('categoryId');
+        await project.populate('category');
 
         res.status(201).json({
             success: true,
@@ -203,7 +203,7 @@ export async function updateProject(req: Request, res: Response, next: NextFunct
         const project = await Project.findByIdAndUpdate(req.params.id, updateData, {
             new: true,
             runValidators: true,
-        }).populate('categoryId');
+        }).populate('category');
 
         if (!project) {
             throw new AppError('Project not found.', 404);
@@ -251,7 +251,7 @@ export async function getAllProjects(req: Request, res: Response, next: NextFunc
         const skip = (page - 1) * limit;
 
         const projects = await Project.find()
-            .populate('categoryId')
+            .populate('category')
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });

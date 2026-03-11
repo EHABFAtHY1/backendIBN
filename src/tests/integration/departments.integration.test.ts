@@ -5,6 +5,7 @@ import { connectDB, disconnectDB } from '../../config/db';
 import User from '../../models/User';
 import Session from '../../models/Session';
 import Department from '../../models/Department';
+import Section from '../../models/Section';
 
 describe('Departments Tests', () => {
     let adminSession: string;
@@ -13,6 +14,7 @@ describe('Departments Tests', () => {
         await connectDB();
         await User.deleteMany({});
         await Session.deleteMany({});
+        await Section.deleteMany({});
         await Department.deleteMany({});
 
         const adminUser = await User.create({
@@ -32,12 +34,13 @@ describe('Departments Tests', () => {
     afterAll(async () => {
         await User.deleteMany({});
         await Session.deleteMany({});
+        await Section.deleteMany({});
         await Department.deleteMany({});
         await disconnectDB();
     });
 
     describe('GET /api/departments', () => {
-        it('should return empty departments list', async () => {
+        it('should return departments with pagination', async () => {
             const response = await request(app).get('/api/departments');
 
             expect(response.status).toBe(200);
@@ -50,13 +53,9 @@ describe('Departments Tests', () => {
     describe('POST /api/departments', () => {
         it('should fail without authentication', async () => {
             const response = await request(app).post('/api/departments').send({
-                titleAr: 'قسم الهندسة',
+                titleAr: 'قسم هندسي',
                 titleEn: 'Engineering Department',
-                descriptionAr: 'وصف القسم الهندسي',
-                descriptionEn: 'Engineering department description',
-                color: '#c5a572',
-                countAr: '25+',
-                countEn: '25+',
+                icon: 'Hammer',
             });
 
             expect(response.status).toBe(401);
@@ -67,22 +66,18 @@ describe('Departments Tests', () => {
                 .post('/api/departments')
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
-                    titleAr: 'قسم الهندسة',
+                    titleAr: 'قسم هندسي',
                     titleEn: 'Engineering Department',
-                    descriptionAr: 'وصف القسم الهندسي',
-                    descriptionEn: 'Engineering department description',
-                    color: '#c5a572',
-                    countAr: '25+',
-                    countEn: '25+',
+                    icon: 'Hammer',
                     order: 1,
                     isVisible: true,
                 });
 
             expect(response.status).toBe(201);
             expect(response.body.success).toBe(true);
-            expect(response.body.data.titleAr).toBe('قسم الهندسة');
-            expect(response.body.data.descriptionAr).toBe('وصف القسم الهندسي');
-            expect(response.body.data.color).toBe('#c5a572');
+            expect(response.body.data.titleAr).toBe('قسم هندسي');
+            expect(response.body.data.titleEn).toBe('Engineering Department');
+            expect(response.body.data.icon).toBe('Hammer');
         });
     });
 
@@ -93,15 +88,14 @@ describe('Departments Tests', () => {
                 .put(`/api/departments/${dept!._id}`)
                 .set('Authorization', `Bearer ${adminSession}`)
                 .send({
-                    titleAr: 'قسم الهندسة المحدث',
-                    descriptionAr: 'وصف محدث',
-                    color: '#a88b4d',
+                    titleAr: 'قسم هندسي محدث',
+                    icon: 'Wrench',
                 });
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(response.body.data.titleAr).toBe('قسم الهندسة المحدث');
-            expect(response.body.data.color).toBe('#a88b4d');
+            expect(response.body.data.titleAr).toBe('قسم هندسي محدث');
+            expect(response.body.data.icon).toBe('Wrench');
         });
 
         it('should return 404 for non-existent department', async () => {
@@ -120,11 +114,7 @@ describe('Departments Tests', () => {
             const dept = await Department.create({
                 titleAr: 'للحذف',
                 titleEn: 'To Delete',
-                descriptionAr: 'وصف',
-                descriptionEn: 'Description',
-                color: '#000000',
-                countAr: '1',
-                countEn: '1',
+                icon: 'Trash',
             });
 
             const response = await request(app)
@@ -133,9 +123,7 @@ describe('Departments Tests', () => {
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-
-            const deleted = await Department.findById(dept._id);
-            expect(deleted).toBeNull();
+            expect(await Department.findById(dept._id)).toBeNull();
         });
     });
 
@@ -144,11 +132,7 @@ describe('Departments Tests', () => {
             await Department.create({
                 titleAr: 'مخفي',
                 titleEn: 'Hidden',
-                descriptionAr: 'وصف مخفي',
-                descriptionEn: 'Hidden description',
-                color: '#333333',
-                countAr: '0',
-                countEn: '0',
+                icon: 'EyeOff',
                 isVisible: false,
             });
 

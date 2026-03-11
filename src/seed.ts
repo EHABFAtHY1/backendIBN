@@ -7,6 +7,7 @@ import ProjectCategory from './models/ProjectCategory';
 import Service from './models/Service';
 import Partner from './models/Partner';
 import Department from './models/Department';
+import Section from './models/Section';
 import QualityStandard from './models/QualityStandard';
 import SiteSettings from './models/SiteSettings';
 import ContactMessage from './models/ContactMessage';
@@ -174,47 +175,39 @@ const departmentsData = [
     {
         titleAr: 'ÞÓã ÇáåäÏÓÉ',
         titleEn: 'Engineering Department',
-        descriptionAr: 'ÅÏÇÑÉ æÊäÝíÐ ÇáÃÚãÇá ÇáåäÏÓíÉ æÇáÅÔÑÇÝ Úáì ÇáÍáæá ÇáÝäíÉ ááãÔÑæÚÇÊ.',
-        descriptionEn: 'Managing engineering execution and supervising technical solutions across projects.',
-        color: 'from-[#c5a572] to-[#a88b4d]',
-        countAr: '25+',
-        countEn: '25+',
+        icon: 'Hammer',
         order: 1,
         isVisible: true,
     },
     {
         titleAr: 'ÞÓã ÇáãÔÇÑíÚ',
         titleEn: 'Projects Department',
-        descriptionAr: 'ãÊÇÈÚÉ ÊÎØíØ æÊäÝíÐ æÌÏæáÉ ÇáãÔÑæÚÇÊ æÖÈØ ÇáÊÓáíã.',
-        descriptionEn: 'Overseeing project planning, execution schedules, and delivery control.',
-        color: 'from-[#1a1a1a] to-[#4a4a4a]',
-        countAr: '18+',
-        countEn: '18+',
+        icon: 'Briefcase',
         order: 2,
         isVisible: true,
     },
     {
         titleAr: 'ÞÓã ÇáãæÇÑÏ ÇáÈÔÑíÉ',
         titleEn: 'HR Department',
-        descriptionAr: 'ÅÏÇÑÉ ÇáÊæÙíÝ æÇáÊØæíÑ æÇáÚãáíÇÊ ÇáãÑÊÈØÉ ÈÇáãæÇÑÏ ÇáÈÔÑíÉ.',
-        descriptionEn: 'Handling recruitment, development, and human resources operations.',
-        color: 'from-[#2c3e50] to-[#34495e]',
-        countAr: '12+',
-        countEn: '12+',
+        icon: 'Users',
         order: 3,
         isVisible: true,
     },
     {
         titleAr: 'ÞÓã ÇáãÇáíÉ',
         titleEn: 'Finance Department',
-        descriptionAr: 'ÅÏÇÑÉ ÇáãÍÇÓÈÉ æÇáÊÞÇÑíÑ ÇáãÇáíÉ æãÑÇÞÈÉ ÇáãÕÑæÝÇÊ æÇáÅíÑÇÏÇÊ.',
-        descriptionEn: 'Managing accounting, financial reporting, and expense and revenue control.',
-        color: 'from-[#27ae60] to-[#2ecc71]',
-        countAr: '8+',
-        countEn: '8+',
+        icon: 'DollarSign',
         order: 4,
         isVisible: true,
     },
+];
+
+const sectionsData = [
+    { titleAr: 'ÇáåäÏÓÉ ÇáãÏäíÉ', titleEn: 'Civil Engineering', icon: 'Building', departmentTitleEn: 'Engineering Department' },
+    { titleAr: 'ÇáåäÏÓÉ ÇáãÚãÇÑíÉ', titleEn: 'Architecture', icon: 'PencilRuler', departmentTitleEn: 'Engineering Department' },
+    { titleAr: 'ÅÏÇÑÉ ÇáãÔÇÑíÚ', titleEn: 'Project Management', icon: 'ClipboardList', departmentTitleEn: 'Projects Department' },
+    { titleAr: 'ÇáÊæÙíÝ æÇáÊØæíÑ', titleEn: 'Recruitment & Development', icon: 'HeadsetIcon', departmentTitleEn: 'HR Department' },
+    { titleAr: 'ÇáãÍÇÓÈÉ', titleEn: 'Accounting', icon: 'Receipt', departmentTitleEn: 'Finance Department' },
 ];
 const qualityStandardsData = [
     {
@@ -445,6 +438,7 @@ async function seed() {
             Service.deleteMany({}),
             Partner.deleteMany({}),
             Department.deleteMany({}),
+            Section.deleteMany({}),
             QualityStandard.deleteMany({}),
             SiteSettings.deleteMany({}),
             ContactMessage.deleteMany({}),
@@ -503,7 +497,18 @@ async function seed() {
         await Service.insertMany(servicesData);
 
         console.log('ðŸ¢ Seeding departments...');
-        await Department.insertMany(departmentsData);
+        const departments = await Department.insertMany(departmentsData);
+
+        const departmentMap = new Map(departments.map((dep) => [dep.titleEn, dep._id]));
+        const sectionsWithDepartments = sectionsData.map((section) => ({
+            titleAr: section.titleAr,
+            titleEn: section.titleEn,
+            icon: section.icon,
+            departmentId: departmentMap.get(section.departmentTitleEn),
+        })).filter((section) => section.departmentId);
+
+        console.log('?? Seeding sections...');
+        await Section.insertMany(sectionsWithDepartments);
 
         console.log('? Seeding quality standards...');
         await QualityStandard.insertMany(qualityStandardsData);
@@ -540,6 +545,9 @@ async function seed() {
 }
 
 seed();
+
+
+
 
 
 

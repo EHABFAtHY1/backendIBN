@@ -62,6 +62,17 @@ npm run dev
 npm run build && npm start
 ```
 
+### 2.1 Seed Commands
+
+```bash
+# Clear seeded collections only
+npm run seed:clear
+
+# Reset and reseed the database
+# Note: this runs the existing seed flow, which clears data before inserting
+npm run seed:reset
+```
+
 ### 3. Docker (Recommended)
 
 ```bash

@@ -18,12 +18,13 @@ export async function getDepartments(req: Request, res: Response, next: NextFunc
         const dto = req.query as PaginationDto;
         const { page, size, skip } = parsePaginationParams(req.query);
 
-        const searchFields = ['titleAr', 'titleEn', 'descriptionAr', 'descriptionEn'];
+        const searchFields = ['titleAr', 'titleEn', 'icon'];
         const query = buildMongoDBQuery({ ...dto, isVisible: true }, searchFields);
 
         const total = await Department.countDocuments(query);
 
         let dbQuery: any = Department.find(query)
+            .populate('sections')
             .sort(parseSortString(dto.sort || 'order'))
             .skip(skip)
             .limit(size);
@@ -55,12 +56,13 @@ export async function getAllDepartments(req: Request, res: Response, next: NextF
         const dto = req.query as PaginationDto;
         const { page, size, skip } = parsePaginationParams(req.query);
 
-        const searchFields = ['titleAr', 'titleEn', 'descriptionAr', 'descriptionEn'];
+        const searchFields = ['titleAr', 'titleEn', 'icon'];
         const query = buildMongoDBQuery(dto, searchFields);
 
         const total = await Department.countDocuments(query);
 
         let dbQuery: any = Department.find(query)
+            .populate('sections')
             .sort(parseSortString(dto.sort || 'order'))
             .skip(skip)
             .limit(size);

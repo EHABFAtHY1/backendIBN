@@ -7,6 +7,7 @@ import companySettingsRoutes from './companySettingsRoutes';
 import serviceRoutes from './serviceRoutes';
 import partnerRoutes from './partnerRoutes';
 import departmentRoutes from './departmentRoutes';
+import sectionRoutes from './sectionRoutes';
 import qualityStandardRoutes from './qualityStandardRoutes';
 import settingsRoutes from './settingsRoutes';
 import mediaRoutes from './mediaRoutes';
@@ -55,6 +56,7 @@ router.get('/', (req, res) => {
             services: '/services',
             partners: '/partners',
             departments: '/departments',
+            sections: '/sections',
             'quality-standards': '/quality-standards',
             employees: '/employees',
             settings: '/settings',
@@ -73,6 +75,7 @@ router.use('/company-settings', companySettingsRoutes);
 router.use('/services', serviceRoutes);
 router.use('/partners', partnerRoutes);
 router.use('/departments', departmentRoutes);
+router.use('/sections', sectionRoutes);
 router.use('/quality-standards', qualityStandardRoutes);
 router.use('/employees', employeeRoutes);
 router.use('/settings', settingsRoutes);
